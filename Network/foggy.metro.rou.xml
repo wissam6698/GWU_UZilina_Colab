@@ -1,0 +1,108 @@
+<routes>
+    <vType id="metro1" accel="1.0" decel="1.0" sigma="0.5" length="30.0" maxSpeed="70.0" vClass="rail_urban"/>
+    <vType id="metro2" accel="1.0" decel="1.0" sigma="0.5" length="30.0" maxSpeed="70.0" vClass="rail_urban"/>
+
+    <route id="route1" edges="834834553"/>
+    <route id="route2" edges="622455542"/>
+    <flow id="metro2_flow_0" type="metro2" begin="0"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+    <flow id="metro1_flow_0" type="metro1" begin="60"  number="1" departLane="0">
+        <route edges="834834553"/>
+    </flow>
+
+    <flow id="metro2_flow_1" type="metro2" begin="240"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+    <flow id="metro1_flow_1" type="metro1" begin="480"  number="1" departLane="0">
+        <route edges="834834553"/>
+    </flow>
+    <flow id="metro2_flow_2" type="metro2" begin="480"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+    <flow id="metro2_flow_3" type="metro2" begin="600"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+    <flow id="metro1_flow_2" type="metro1" begin="780"  number="1" departLane="0">
+        <route edges="834834553"/>
+    </flow>
+    <flow id="metro1_flow_3" type="metro1" begin="900"  number="1" departLane="0">
+        <route edges="834834553"/>
+    </flow>
+    <flow id="metro2_flow_4" type="metro2" begin="900"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+    <flow id="metro1_flow_4" type="metro1" begin="1200"  number="1" departLane="0">
+        <route edges="834834553"/>
+    </flow>
+    <flow id="metro2_flow_5" type="metro2" begin="1200"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+    <flow id="metro2_flow_6" type="metro2" begin="1320"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+    <flow id="metro1_flow_5" type="metro1" begin="1440"  number="1" departLane="0">
+        <route edges="834834553"/>
+    </flow>
+    <flow id="metro1_flow_6" type="metro1" begin="1560"  number="1" departLane="0">
+        <route edges="834834553"/>
+    </flow>
+    <flow id="metro2_flow_7" type="metro2" begin="1620"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+    <flow id="metro1_flow_7" type="metro1" begin="1980"  number="1" departLane="0">
+        <route edges="834834553"/>
+    </flow>
+    <flow id="metro2_flow_8" type="metro2" begin="2040"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+    <flow id="metro1_flow_8" type="metro1" begin="2280"  number="1" departLane="0">
+        <route edges="834834553"/>
+    </flow>
+    <flow id="metro2_flow_9" type="metro2" begin="2340"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+    <flow id="metro1_flow_9" type="metro1" begin="2400"  number="1" departLane="0">
+        <route edges="834834553"/>
+    </flow>
+    <flow id="metro2_flow_10" type="metro2" begin="2640"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+    <flow id="metro1_flow_10" type="metro1" begin="2700"  number="1" departLane="0">
+        <route edges="834834553"/>
+    </flow>
+    <flow id="metro2_flow_11" type="metro2" begin="2820"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+    <flow id="metro1_flow_11" type="metro1" begin="2940"  number="1" departLane="0">
+        <route edges="834834553"/>
+    </flow>
+    <flow id="metro1_flow_12" type="metro1" begin="3060"  number="1" departLane="0">
+        <route edges="834834553"/>
+    </flow>
+    <flow id="metro2_flow_12" type="metro2" begin="3060"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+    <flow id="metro1_flow_13" type="metro1" begin="3360"  number="1" departLane="0">
+        <route edges="834834553"/>
+    </flow>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <flow id="metro2_flow_13" type="metro2" begin="3360"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+    <flow id="metro2_flow_14" type="metro2" begin="3480"  number="1" departLane="0">
+        <route edges="622455542"/>
+    </flow>
+</routes>

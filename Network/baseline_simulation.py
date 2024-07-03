@@ -4,7 +4,7 @@ import csv
 
 def run_simulation(step_limit, output_interval, output_file):
     # Start SUMO simulation
-    sumo_cmd = ["sumo-gui", "-c", r"C:\Users\Pedram\Downloads\finalversion_DRL\Network\foggybottommetro.sumocfg"]
+    sumo_cmd = ["sumo-gui", "-c", r"C:\Users\Pedram\Desktop\GWU_UZilina_Colab\Network\foggybottommetro.sumocfg"]
     traci.start(sumo_cmd)
 
     step = 0
