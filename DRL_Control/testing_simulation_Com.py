@@ -179,7 +179,7 @@ class Simulation:
         # Simulate fetching vehicle data from OMNeT++
         car_list = self.get_vehicle_ids_from_omnet()
         car_list = pick_elements(car_list, penetration_rate)
-        car_list= self.omnet_received_messages(car_list,message_frequency)
+        car_list= self.vehicle_omnet_received_messages(car_list,message_frequency)
         for car_id in car_list:
             lane_pos = self.get_vehicle_lane_position_from_omnet(car_id)
             edge_name = self.get_vehicle_road_id_from_omnet(car_id)
@@ -231,7 +231,7 @@ class Simulation:
         # Simulate fetching pedestrian data from OMNeT++
         pedestrian_ids = self.get_pedestrian_ids_from_omnet()
         pedestrian_ids = pick_elements(pedestrian_ids, penetration_rate)
-        pedestrian_ids= self.simulate_message_frequency(self, pedestrian_ids, message_frequency,minfrequency,maxfrequency)
+        pedestrian_ids= self.pedestrian_omnet_received_messages(self, pedestrian_ids, message_frequency,minfrequency,maxfrequency)
         print(time.time() - start)
 
         c2, c3, c14 = 0, 0, 0
@@ -261,7 +261,7 @@ class Simulation:
 
         return state, c14, c2, c3
 
-    def simulate_message_frequency(self, ids, frequency_hz, min_frequency, max_frequency):
+    def pedestrian_omnet_received_messages(self, ids, frequency_hz, min_frequency, max_frequency):
         """
         Simulate the message sending frequency for a given list of IDs (e.g., pedestrians or vehicles).
         The frequency is given in Hz and mapped to a probability based on the min and max frequency.
@@ -282,7 +282,6 @@ class Simulation:
 
     # Placeholder functions for OMNeT++ integration
     def get_pedestrian_ids_from_omnet(self):
-        # Replace this with actual code to get pedestrian IDs from OMNeT++
         return traci.person.getIDList()
 
     def get_vehicle_ids_from_omnet(self):
@@ -297,9 +296,7 @@ class Simulation:
         # Replace this with actual code to get vehicle road ID from OMNeT++
         return traci.vehicle.getRoadID(car_id)
 
-    def omnet_received_messages(self,car_list,frequency):
+    def vehicle_omnet_received_messages(self,car_list,frequency):
         return car_list #the cars that were able to send the message 
 
-    def set_message_frequency_in_omnet(self, message_frequency):
-        # Replace this with actual code to set message frequency in OMNeT++
-        pass
+  
