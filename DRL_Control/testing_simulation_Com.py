@@ -172,25 +172,6 @@ class Simulation:
         state = np.zeros(self._num_states)
         start = time.time()
 
-        # Adjust penetration rate and message frequency in OMNeT++
-
-        # Simulate fetching pedestrian data from OMNeT++
-        pedestrian_ids = self.get_pedestrian_ids_from_omnet()
-        pedestrian_ids = pick_elements(pedestrian_ids, penetration_rate)
-        pedestrian_ids= self.simulate_message_frequency(self, pedestrian_ids, message_frequency,minfrequency,maxfrequency)
-        print(time.time() - start)
-
-        c2, c3, c14 = 0, 0, 0
-        for pedestrian_id in pedestrian_ids:
-            movement = extract_before_underscore(pedestrian_id)
-            if movement in ['ped1', 'ped3']:
-                c14 += 1
-            elif movement in ['ped2', 'ped4']:
-                c2 += 1
-            elif movement in ['ped5', 'ped6']:
-                c3 += 1
-
-        totalped = len(pedestrian_ids)
 
         id_to_index = lambda a, b: (a - 1) * 6 + (b - 1)
         sdic = {}
@@ -198,7 +179,7 @@ class Simulation:
         # Simulate fetching vehicle data from OMNeT++
         car_list = self.get_vehicle_ids_from_omnet()
         car_list = pick_elements(car_list, penetration_rate)
-        car_list= self.omnet_recieved_messages(car_list,message_frequency)
+        car_list= self.omnet_received_messages(car_list,message_frequency)
         for car_id in car_list:
             lane_pos = self.get_vehicle_lane_position_from_omnet(car_id)
             edge_name = self.get_vehicle_road_id_from_omnet(car_id)
@@ -244,6 +225,26 @@ class Simulation:
                     sdic[id] = 0
                 sdic[id] += 1
 
+        minfrequency=0.5
+        maxfrequency=5# this is the maximum frequency after which the model will not be impacted
+
+        # Simulate fetching pedestrian data from OMNeT++
+        pedestrian_ids = self.get_pedestrian_ids_from_omnet()
+        pedestrian_ids = pick_elements(pedestrian_ids, penetration_rate)
+        pedestrian_ids= self.simulate_message_frequency(self, pedestrian_ids, message_frequency,minfrequency,maxfrequency)
+        print(time.time() - start)
+
+        c2, c3, c14 = 0, 0, 0
+        for pedestrian_id in pedestrian_ids:
+            movement = extract_before_underscore(pedestrian_id)
+            if movement in ['ped1', 'ped3']:
+                c14 += 1
+            elif movement in ['ped2', 'ped4']:
+                c2 += 1
+            elif movement in ['ped5', 'ped6']:
+                c3 += 1
+
+        totalped = len(pedestrian_ids)
         # Update pedestrian data
         vehtopedratio = 1
         sdic[24] = c2 / vehtopedratio
@@ -260,24 +261,24 @@ class Simulation:
 
         return state, c14, c2, c3
 
-def simulate_message_frequency(self, ids, frequency_hz, min_frequency, max_frequency):
-    """
-    Simulate the message sending frequency for a given list of IDs (e.g., pedestrians or vehicles).
-    The frequency is given in Hz and mapped to a probability based on the min and max frequency.
-    """
-    # Map frequency to a probability
-    if frequency_hz < min_frequency:
-        probability = 0.0
-    elif frequency_hz > max_frequency:
-        probability = 1.0
-    else:
-        probability = (frequency_hz - min_frequency) / (max_frequency - min_frequency)
+    def simulate_message_frequency(self, ids, frequency_hz, min_frequency, max_frequency):
+        """
+        Simulate the message sending frequency for a given list of IDs (e.g., pedestrians or vehicles).
+        The frequency is given in Hz and mapped to a probability based on the min and max frequency.
+        """
+        # Map frequency to a probability
+        if frequency_hz < min_frequency:
+            probability = 0.0
+        elif frequency_hz > max_frequency:
+            probability = 1.0
+        else:
+            probability = (frequency_hz - min_frequency) / (max_frequency - min_frequency)
 
-    filtered_ids = []
-    for id in ids:
-        if random.random() < probability:
-            filtered_ids.append(id)
-    return filtered_ids
+        filtered_ids = []
+        for id in ids:
+            if random.random() < probability:
+                filtered_ids.append(id)
+        return filtered_ids
 
     # Placeholder functions for OMNeT++ integration
     def get_pedestrian_ids_from_omnet(self):
@@ -296,7 +297,7 @@ def simulate_message_frequency(self, ids, frequency_hz, min_frequency, max_frequ
         # Replace this with actual code to get vehicle road ID from OMNeT++
         return traci.vehicle.getRoadID(car_id)
 
-    def omnet_recieved_messages(self,car_list,frequency):
+    def omnet_received_messages(self,car_list,frequency):
         return car_list #the cars that were able to send the message 
 
     def set_message_frequency_in_omnet(self, message_frequency):
