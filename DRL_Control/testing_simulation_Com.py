@@ -160,12 +160,13 @@ class Simulation:
 
 
 
+
     def _get_state(self, penetration_rate, message_frequency):
         """
         Retrieve the state of the intersection from OMNeT++ simulation, in the form of cell occupancy.
         Adjust the penetration rate of connected vehicles and the message sending frequency.
         """
-        pick_random_elements = lambda lst, factor: random.sample(lst, int(len(lst) * factor))
+        pick_elements = lambda lst, factor: random.sample(lst, int(len(lst) * factor))
         extract_before_underscore = lambda word: word.split('_')[0]
 
         state = np.zeros(self._num_states)
@@ -175,8 +176,8 @@ class Simulation:
 
         # Simulate fetching pedestrian data from OMNeT++
         pedestrian_ids = self.get_pedestrian_ids_from_omnet()
-        pedestrian_ids = pick_random_elements(pedestrian_ids, penetration_rate)
-        pedestrian_ids= self.simulate_message_frequency(self, pedestrian_ids, message_frequency)
+        pedestrian_ids = pick_elements(pedestrian_ids, penetration_rate)
+        pedestrian_ids= self.simulate_message_frequency(self, pedestrian_ids, message_frequency,minfrequency,maxfrequency)
         print(time.time() - start)
 
         c2, c3, c14 = 0, 0, 0
@@ -196,7 +197,7 @@ class Simulation:
 
         # Simulate fetching vehicle data from OMNeT++
         car_list = self.get_vehicle_ids_from_omnet()
-        car_list = pick_random_elements(car_list, penetration_rate)
+        car_list = pick_elements(car_list, penetration_rate)
         car_list= self.omnet_recieved_messages(car_list,message_frequency)
         for car_id in car_list:
             lane_pos = self.get_vehicle_lane_position_from_omnet(car_id)
@@ -259,114 +260,25 @@ class Simulation:
 
         return state, c14, c2, c3
 
+def simulate_message_frequency(self, ids, frequency_hz, min_frequency, max_frequency):
+    """
+    Simulate the message sending frequency for a given list of IDs (e.g., pedestrians or vehicles).
+    The frequency is given in Hz and mapped to a probability based on the min and max frequency.
+    """
+    # Map frequency to a probability
+    if frequency_hz < min_frequency:
+        probability = 0.0
+    elif frequency_hz > max_frequency:
+        probability = 1.0
+    else:
+        probability = (frequency_hz - min_frequency) / (max_frequency - min_frequency)
 
-    def _get_state(self, penetration_rate, message_frequency):
-        """
-        Retrieve the state of the intersection from OMNeT++ simulation, in the form of cell occupancy.
-        Adjust the penetration rate of connected vehicles and the message sending frequency.
-        """
-        pick_random_elements = lambda lst, factor: random.sample(lst, int(len(lst) * factor))
-        extract_before_underscore = lambda word: word.split('_')[0]
+    filtered_ids = []
+    for id in ids:
+        if random.random() < probability:
+            filtered_ids.append(id)
+    return filtered_ids
 
-        state = np.zeros(self._num_states)
-        start = time.time()
-
-        # Adjust penetration rate and message frequency in OMNeT++
-
-        # Simulate fetching pedestrian data from OMNeT++
-        pedestrian_ids = self.get_pedestrian_ids_from_omnet()
-        pedestrian_ids = pick_random_elements(pedestrian_ids, penetration_rate)
-        pedestrian_ids= self.simulate_message_frequency(self, pedestrian_ids, message_frequency)
-        print(time.time() - start)
-
-        c2, c3, c14 = 0, 0, 0
-        for pedestrian_id in pedestrian_ids:
-            movement = extract_before_underscore(pedestrian_id)
-            if movement in ['ped1', 'ped3']:
-                c14 += 1
-            elif movement in ['ped2', 'ped4']:
-                c2 += 1
-            elif movement in ['ped5', 'ped6']:
-                c3 += 1
-
-        totalped = len(pedestrian_ids)
-
-        id_to_index = lambda a, b: (a - 1) * 6 + (b - 1)
-        sdic = {}
-
-        # Simulate fetching vehicle data from OMNeT++
-        car_list = self.get_vehicle_ids_from_omnet()
-        car_list = pick_random_elements(car_list, penetration_rate)
-        car_list= self.omnet_recieved_messages(car_list,message_frequency)
-        for car_id in car_list:
-            lane_pos = self.get_vehicle_lane_position_from_omnet(car_id)
-            edge_name = self.get_vehicle_road_id_from_omnet(car_id)
-
-            lane_cell = 101  # Default value if not found in any conditions
-            if edge_name == '1120094388#0':
-                lane_cell = 0
-            elif edge_name == '1120094388#1':
-                lane_cell = 1
-            elif edge_name == '130285156#1':
-                lane_cell = 2
-            elif edge_name == '130285156#2':
-                lane_cell = 3
-            elif edge_name == '50799230#0':  # I street
-                if lane_pos < 62.5:
-                    lane_cell = 1
-                elif lane_pos < 135:
-                    lane_cell = 2
-                else:
-                    lane_cell = 3
-            elif edge_name == '50799230#3':  # I street
-                if lane_pos < 9:
-                    lane_cell = 3
-                else:
-                    lane_cell = 4
-            elif edge_name == '-590598876#1':
-                if lane_pos < 25:
-                    lane_cell = 1
-                elif lane_pos < 50:
-                    lane_cell = 2
-                elif lane_pos < 75:
-                    lane_cell = 3
-                else:
-                    lane_cell = 4
-
-            movement = extract_before_underscore(car_id)
-            movement_dict = {'veh1': 1, 'veh98': 2, 'veh0': 3, 'veh55': 4, 'veh51': 5, 'veh60': 6}
-            movement_number = movement_dict.get(movement, None)
-
-            if movement_number is not None and lane_cell != 101:
-                id = id_to_index(lane_cell, movement_number)
-                if id not in sdic:
-                    sdic[id] = 0
-                sdic[id] += 1
-
-        # Update pedestrian data
-        vehtopedratio = 1
-        sdic[24] = c2 / vehtopedratio
-        sdic[25] = c3 / vehtopedratio
-        sdic[26] = c14 / vehtopedratio
-
-        # Normalize and update the state
-        total = sum(sdic.values())
-        total = total if total != 0 else 1  # Avoid division by zero
-
-        for id in sdic.keys():
-            s = sdic[id] / total
-            state[id] = s
-
-        return state, c14, c2, c3
-    def simulate_message_frequency(self, ids, frequency):
-        """
-        Simulate the message sending frequency for a given list of IDs (e.g., pedestrians or vehicles).
-        """
-        filtered_ids = []
-        for id in ids:
-            if random.random() < frequency:
-                filtered_ids.append(id)
-        return filtered_ids
     # Placeholder functions for OMNeT++ integration
     def get_pedestrian_ids_from_omnet(self):
         # Replace this with actual code to get pedestrian IDs from OMNeT++
