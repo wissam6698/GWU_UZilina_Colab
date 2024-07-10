@@ -183,25 +183,36 @@ class Simulation:
         c2=0
         c3=0
         c14=0
+        extract_before_underscore = lambda word: word.split('_')[0]
+
         pedestrian_ids = traci.person.getIDList()
         for pedestrian_id in pedestrian_ids:
- 
+            #print(pedestrian_id)
+            movement=extract_before_underscore(pedestrian_id)
+            #print(movement)
+            if movement=='pedestrian1' or movement=='pedestrian3':
+                c14+=1
+            elif movement=='pedestrian2' or movement=='pedestrian4':
+                c2+=1
+            elif movement=='pedestrian5' or movement=='pedestrian6':
+                c3+=1
+            '''
             if traci.person.getRoadID(pedestrian_id)==':cluster_49793670_9123357154_9123357155_9428447085_w2':
                 c2+=1
             elif traci.person.getRoadID(pedestrian_id)==':cluster_49793670_9123357154_9123357155_9428447085_w1':
                 c3+=1
             elif traci.person.getRoadID(pedestrian_id)==':cluster_49793670_9123357154_9123357155_9428447085_w0':
                 c14+=1
+            '''
+        totalped=len(pedestrian_ids)
 
-
-        extract_before_underscore = lambda word: word.split('_')[0]
         id_to_index = lambda a, b: (a - 1) * 6 + (b - 1)
         sdic={}
         for car_id in car_list:
             lane_pos = traci.vehicle.getLanePosition(car_id)
-            lane_id = traci.vehicle.getLaneID(car_id)
+            #lane_id = traci.vehicle.getLaneID(car_id)
             edge_name=traci.vehicle.getRoadID(car_id)
-            lane_pos = 750 - lane_pos  # inversion of lane pos, so if the car is close to the traffic light -> lane_pos = 0 --- 750 = max len of a road
+            #lane_pos = 750 - lane_pos  # inversion of lane pos, so if the car is close to the traffic light -> lane_pos = 0 --- 750 = max len of a road
             weird_road=['1120094388#0' '1120094388#1' '130285156#1' '130285156#2 ']
             if edge_name=='1120094388#0':
                 lane_cell=0
@@ -258,14 +269,22 @@ class Simulation:
                 if id not in sdic.keys():
                     sdic[id]=0
                 sdic[id]+=1
-        
+        vehtopedratio=1
+        sdic[24]=c2/vehtopedratio
+        sdic[25]=c3/vehtopedratio
+        sdic[26]=c14/vehtopedratio
         for id in sdic.keys():
-            s=sdic[id]/sum(sdic.values())
+            total=sum(sdic.values())
+            if total==0:
+                total=1
+        
+            s=sdic[id]/total
             #print(s)
-            state[id] = s  # write the position of the car car_id in the state array in the form of "cell occupied"
-        state[24]=c2/20 if c2<20 else 1
-        state[25]=c3/40 if c3<40 else 1
-        state[26]=c14/40 if c14<40 else 1
+            state[id] = s 
+            #print(state) # write the position of the car car_id in the state array in the form of "cell occupied"
+        #state[24]=c2/totalped#/20 if c2<20 else 1
+        #state[25]=c3/totalped#/40 if c3<40 else 1
+        #state[26]=c14/totalped#/40 if c14<40 else 1
         '''
         if c2>10:
             state[24]==1

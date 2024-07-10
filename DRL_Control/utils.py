@@ -2,7 +2,7 @@ import configparser
 from sumolib import checkBinary
 import os
 import sys
-
+import random
 
 def import_train_configuration(config_file):
     """
@@ -73,15 +73,24 @@ def set_sumo(gui, sumocfg_file_name, max_steps):
         sumoBinary = checkBinary('sumo-gui')
  
     # setting the cmd command to run sumo at simulation time
-    sumo_cmd = [sumoBinary, "-c", r"C:\Users\Pedram\Downloads\finalversion_DRL\Network\foggybottommetro.sumocfg", "--no-step-log", "true", "--waiting-time-memory", str(max_steps)]
+    sumo_cmd = ['sumo', "-c", r"C:\Users\Pedram\Desktop\GWU_UZilina_Colab\Network\foggybottommetro.sumocfg", "--no-step-log", "true", "--waiting-time-memory", str(max_steps)]
 
     return sumo_cmd
 
+
+def pick_random_elements(car_list, factor):
+        # Calculate the number of elements to pick
+    num_elements_to_pick = int(len(car_list) * factor)
+        
+        # Pick random elements from the list
+    final_list = random.sample(car_list, num_elements_to_pick)
+    return final_list
 
 def set_train_path(models_path_name):
     """
     Create a new model path with an incremental integer, also considering previously created model paths
     """
+    '''
     models_path = os.path.join(os.getcwd(), models_path_name, '')
     os.makedirs(os.path.dirname(models_path), exist_ok=True)
 
@@ -94,18 +103,13 @@ def set_train_path(models_path_name):
 
     data_path = os.path.join(models_path, 'model_'+new_version, '')
     os.makedirs(os.path.dirname(data_path), exist_ok=True)
-    return data_path 
+    '''
+    return r"C:\Users\Pedram\Desktop\GWU_UZilina_Colab\models\model_20" 
 
 
 def set_test_path(models_path_name, model_n):
     """
     Returns a model path that identifies the model number provided as argument and a newly created 'test' path
     """
-    model_folder_path = os.path.join(os.getcwd(), models_path_name, 'model_'+str(model_n), '')
-
-    if os.path.isdir(model_folder_path):    
-        plot_path = os.path.join(model_folder_path, 'test', '')
-        os.makedirs(os.path.dirname(plot_path), exist_ok=True)
-        return model_folder_path, plot_path
-    else: 
-        sys.exit('The model number specified does not exist in the models folder')
+    return r"C:\Users\Pedram\Desktop\GWU_UZilina_Colab\models\model_16",r"C:\Users\Pedram\Desktop"
+  

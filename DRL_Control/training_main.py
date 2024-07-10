@@ -14,7 +14,7 @@ from utils import import_train_configuration, set_sumo, set_train_path
 
 if __name__ == "__main__":
 
-    config = import_train_configuration(config_file=r"C:\Users\Pedram\Downloads\finalversion_DRL\DRL_Control\training_settings.ini")
+    config = import_train_configuration(config_file=r"C:\Users\Pedram\Desktop\GWU_UZilina_Colab\DRL_Control\training_settings.ini")
     sumo_cmd = set_sumo(config['gui'], config['sumocfg_file_name'], config['max_steps'])
     path = set_train_path(config['models_path_name'])
 
